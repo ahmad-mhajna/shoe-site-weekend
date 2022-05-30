@@ -1,6 +1,7 @@
 import React from "react";
 import "./Card.css";
 import Button from "../Button/Button";
+import { Link } from "react-router-dom";
 class Card extends React.Component {
   render() {
     return (
@@ -8,8 +9,14 @@ class Card extends React.Component {
         <p className="card-text">{this.props.shoe.name}</p>
         <p className="card-text">{this.props.shoe.brand}</p>
         <p className="card-text">{this.props.shoe.price}</p>
-        <Button text="Edit" onClick={this.props.editShoe} />
-        <Button text="Delete" onClick={this.props.deleteShoe} />
+        <Link onClick={this.props.editShoe} to="/form">
+          Edit
+        </Link>
+        <Button
+          text="Delete"
+          onClick={this.props.deleteShoe}
+          id={this.props.shoe.id}
+        />
       </div>
     );
   }
