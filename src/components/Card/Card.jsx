@@ -9,7 +9,12 @@ class Card extends React.Component {
         <p className="card-text">{this.props.shoe.name}</p>
         <p className="card-text">{this.props.shoe.brand}</p>
         <p className="card-text">{this.props.shoe.price}</p>
-        <Link onClick={this.props.editShoe} to="/form">
+        <Link
+          onClick={() => {
+            this.props.editShoe(this.props.shoe);
+          }}
+          to="/form"
+        >
           Edit
         </Link>
         <Button

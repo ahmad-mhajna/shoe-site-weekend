@@ -39,7 +39,7 @@ class Form extends React.Component {
             });
           }}
         />
-        <Button type="submit" text="Add" />
+        <Button type="submit" text={this.props.isEdit ? "Edit" : "Add"} />
       </form>
     );
   }

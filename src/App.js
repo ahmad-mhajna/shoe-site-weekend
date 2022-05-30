@@ -1,13 +1,16 @@
 import "./style.css";
 import Card from "./components/Card/Card";
-import Button from "./components/Button/Button";
-import { BrowserRouter, Route, Link } from "react-router-dom";
+import { Route, Link, useHistory, Router } from "react-router-dom";
 import apiInstance from "./api/api";
 import { useEffect, useState } from "react";
 import Form from "./components/Form/Form";
+import {} from "react-router-dom";
 function App() {
+  const initalShoe = { name: "", brand: "", price: 0 };
+  let History = useHistory();
   const [data, setData] = useState([]);
-  const [shoe, setShoe] = useState({});
+  const [shoe, setShoe] = useState(initalShoe);
+  const [isEdit, setEdit] = useState(false);
   const getData = async () => {
     const response = await apiInstance.get("");
     setData(response.data);
@@ -15,10 +18,24 @@ function App() {
   useEffect(() => {
     getData();
   }, []);
-  const editShoe = () => {};
+  const editShoe = async () => {
+    try {
+      await apiInstance.put(`/${shoe.id}`, shoe);
+      getData();
+      setShoe(initalShoe);
+      setEdit(false);
+    } catch (e) {
+      console.error(e);
+    }
+  };
   const addShoe = async () => {
-    await apiInstance.post("", shoe);
-    getData();
+    try {
+      await apiInstance.post("", shoe);
+      setShoe(initalShoe);
+      getData();
+    } catch (e) {
+      console.error(e);
+    }
   };
   const deleteShoe = async (event) => {
     await apiInstance.delete(`/${event.target.getAttribute("data-id")}`);
@@ -26,7 +43,7 @@ function App() {
   };
   return (
     <div className="app-root">
-      <BrowserRouter>
+      <Router history={History}>
         <Route path="/" exact>
           <Link to="/form">Add Shoe</Link>
           <div className="cards">
@@ -36,7 +53,10 @@ function App() {
                   shoe={shoe}
                   key={i}
                   deleteShoe={deleteShoe}
-                  editShoe={editShoe}
+                  editShoe={(shoe) => {
+                    setShoe(shoe);
+                    setEdit(true);
+                  }}
                 />
               );
             })}
@@ -46,13 +66,16 @@ function App() {
           <Form
             onSubmit={(e) => {
               e.preventDefault();
-              addShoe();
+              History.push("/");
+              if (!isEdit) addShoe();
+              else editShoe();
             }}
             shoe={shoe}
             setShoe={setShoe}
+            isEdit={isEdit}
           />
         </Route>
-      </BrowserRouter>
+      </Router>
     </div>
   );
 }
