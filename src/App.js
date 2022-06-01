@@ -2,23 +2,32 @@ import "./style.css";
 import Card from "./components/Card/Card";
 import { Route, Link, useHistory, Router } from "react-router-dom";
 import apiInstance from "./api/api";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Form from "./components/Form/Form";
 import {} from "react-router-dom";
 function App() {
   const initalShoe = { name: "", brand: "", price: 0 };
   let History = useHistory();
+  const spinnerRef = useRef();
   const [data, setData] = useState([]);
   const [shoe, setShoe] = useState(initalShoe);
   const [isEdit, setEdit] = useState(false);
   const getData = async () => {
-    const response = await apiInstance.get("");
-    setData(response.data);
+    spinnerRef.current.classList.remove("hidden");
+    try {
+      const response = await apiInstance.get("");
+      setData(response.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      spinnerRef.current.classList.add("hidden");
+    }
   };
   useEffect(() => {
     getData();
   }, []);
   const editShoe = async () => {
+    spinnerRef.current.classList.remove("hidden");
     try {
       await apiInstance.put(`/${shoe.id}`, shoe);
       getData();
@@ -26,20 +35,32 @@ function App() {
       setEdit(false);
     } catch (e) {
       console.error(e);
+    } finally {
+      spinnerRef.current.classList.add("hidden");
     }
   };
   const addShoe = async () => {
+    spinnerRef.current.classList.remove("hidden");
     try {
       await apiInstance.post("", shoe);
       setShoe(initalShoe);
       getData();
     } catch (e) {
       console.error(e);
+    } finally {
+      spinnerRef.current.classList.add("hidden");
     }
   };
   const deleteShoe = async (event) => {
-    await apiInstance.delete(`/${event.target.getAttribute("data-id")}`);
-    getData();
+    spinnerRef.current.classList.remove("hidden");
+    try {
+      await apiInstance.delete(`/${event.target.getAttribute("data-id")}`);
+      getData();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      spinnerRef.current.classList.add("hidden");
+    }
   };
   return (
     <div className="app-root">
@@ -75,6 +96,9 @@ function App() {
             isEdit={isEdit}
           />
         </Route>
+        <div className="spinner hidden" ref={spinnerRef}>
+          <div className="loader">Loading...</div>
+        </div>
       </Router>
     </div>
   );
