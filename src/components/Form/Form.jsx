@@ -1,6 +1,8 @@
 import React from "react";
 import Button from "../Button/Button";
 import Input from "../input/Input";
+import { Link } from "react-router-dom";
+import "./Form.css";
 class Form extends React.Component {
   render() {
     return (
@@ -40,6 +42,7 @@ class Form extends React.Component {
           }}
         />
         <Button type="submit" text={this.props.isEdit ? "Edit" : "Add"} />
+        <Link to="/">Back</Link>
       </form>
     );
   }
